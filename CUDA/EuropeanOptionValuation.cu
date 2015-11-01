@@ -153,7 +153,7 @@ float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float price, float min_s
         // The volatility was below the min value given.
         return AF_UNKNOWN_SIGMA;
     }
-
+    // Runa simple bisection method.
     for (int i = 0; i < max_iter && diff > tol; i++) {
         mid = (a + b) / 2;
         value = af_EuroOptionPrice(rsqrt_tau, option->tau, mid, ln_S_K, option->r, option->q option->S, option->K, disc_r, disc_q);
