@@ -51,8 +51,6 @@ typedef struct afOptionInfo_t {
     float           price;
     // The dividend yield of the underlying stock.
     float           q;
-    // The price of the option.
-    float           price;
 } afOptionInfo_t;
 
 #endif // AF_OPTIONS_H

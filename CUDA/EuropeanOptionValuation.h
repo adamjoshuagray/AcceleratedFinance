@@ -3,6 +3,7 @@
 #define AF_EUROPEAN_OPTION_VALUATION_H
 
 #include "Options.h"
+#include "Result.h"
 
 //
 // Calculates d_1 as described by https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model
