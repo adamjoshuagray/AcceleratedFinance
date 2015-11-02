@@ -1,5 +1,5 @@
 
-#include "Options.h"
+#include "EuropeanOptionValuation.h"
 #include "math.h"
 
 __device__
@@ -134,7 +134,7 @@ float af_EuropOptionTheta(afOptionInfo_t* option) {
 
 
 __device__
-float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float price, float min_sigma, float max_sigma, float tol, int max_iter) {
+float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float max_sigma, float tol, int max_iter) {
   if (option->style == AF_OPTION_STYLE_EUROPEAN) {
     float rsqrt_tau   = rsqrt(option->tau);
     float ln_S_K      = logf(option->S / option->K);
@@ -142,30 +142,28 @@ float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float price, float min_s
     float disc_q      = expf(-option->q * option->tau);
     float a           = min_sigma;
     float b           = max_sigma;
-    float diff        = MAXFLOAT;
+    float diff;
     float value;
     float mid;
-    if (af_EuroOptionPrice(rsqrt_tau, option->tau, b, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) > price) {
+    if (af_EuroOptionPrice(rsqrt_tau, option->tau, b, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) > option->price) {
         // The volatility was above the max value given.
         return AF_UNKNOWN_SIGMA;
     }
-    if(af_EuroOptionPrice(rsqrt_tau, option->tau, a, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) < price) {
+    if(af_EuroOptionPrice(rsqrt_tau, option->tau, a, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) < option->price) {
         // The volatility was below the min value given.
         return AF_UNKNOWN_SIGMA;
     }
-
     for (int i = 0; i < max_iter && diff > tol; i++) {
         mid = (a + b) / 2;
-        value = af_EuroOptionPrice(rsqrt_tau, option->tau, mid, ln_S_K, option->r, option->q option->S, option->K, disc_r, disc_q);
-        diff = abs(value - put);
-        if (value > put) {
+        value = af_EuroOptionPrice(rsqrt_tau, option->tau, mid, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q);
+        diff = abs(value - option->price);
+        if (value > option->price) {
             b = mid;
         } else {
             a = mid;
         }
     }
     return mid;
-
   }
   return AF_UNKNOWN;
 }

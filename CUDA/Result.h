@@ -8,6 +8,8 @@
 #define AF_RESULT_SUCCESS 1
 #define AF_RESULT_ERROR 0
 
+#define AF_UNKNOWN NaN
+
 typedef int afResult_t;
 
 #endif //AF_RESULT_H

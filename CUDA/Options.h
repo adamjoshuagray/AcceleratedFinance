@@ -9,8 +9,6 @@
 #define AF_OPTION_TYPE_CALL 1
 #define AF_OPTION_TYPE_PUT 2
 
-#define AF_UNKNOWN NaN
-
 /**
  * These define the style of option.
  * That is european or american.
@@ -53,6 +51,8 @@ typedef struct afOptionInfo_t {
     float           price;
     // The dividend yield of the underlying stock.
     float           q;
+    // The price of the option.
+    float           price;
 } afOptionInfo_t;
 
 #endif // AF_OPTIONS_H
