@@ -18,12 +18,18 @@
 #define AF_OPTION_STYLE_EUROPEAN 1
 #define AF_OPTION_STYLE_AMERICAN 2
 
+// Whether we use r for r_curve for
+// the risk free rate.
 #define AF_OPTION_YIELD_STYLE_SCALAR 1
 #define AF_OPTION_YIELD_STYLE_CURVE 2
 
+// Whether we use q or q_curve for the
+// dividend yeilds.
 #define AF_OPTION_DIVIDEND_STYLE_SCALAR 1
 #define AF_OPTION_DIVIDEND_STYLE_CURVE 2
 
+// Whether we use sigma or sigma_curve
+// for the volatility of the stock.
 #define AF_OPTION_SIGMA_STYLE_SCALAR 1
 #define AF_OPTION_SIGMA_STYLE_CURVE 2
 /*
@@ -48,6 +54,7 @@ typedef struct afOptionInfo_t {
     afOptionStyle_t style;
     // The type of the option - Put or Call.
     afOptionType_t  type;
+
 
     afOptionSigmaStyle_t      sigma_style;
 
