@@ -18,12 +18,23 @@
 #define AF_OPTION_STYLE_EUROPEAN 1
 #define AF_OPTION_STYLE_AMERICAN 2
 
+#define AF_OPTION_YIELD_STYLE_SCALAR 1
+#define AF_OPTION_YIELD_STYLE_CURVE 2
+
+#define AF_OPTION_DIVIDEND_STYLE_SCALAR 1
+#define AF_OPTION_DIVIDEND_STYLE_CURVE 2
+
+#define AF_OPTION_SIGMA_STYLE_SCALAR 1
+#define AF_OPTION_SIGMA_STYLE_CURVE 2
 /*
  * Just typedefs for the type and
  * style of option.
  */
 typedef int afOptionType_t;
 typedef int afOptionStyle_t;
+typedef int afOptionSigmaStyle_t;
+typedef int afOptionYieldStyle_t;
+typedef int afOptionDividendStyle_t;
 
 /**
  * This defines the info associated
@@ -37,6 +48,12 @@ typedef struct afOptionInfo_t {
     afOptionStyle_t style;
     // The type of the option - Put or Call.
     afOptionType_t  type;
+
+    afOptionSigmaStyle_t      sigma_style;
+
+    afOptionDividendStyle_t   q_style;
+
+    afOptionYieldStyle_t      r_style;
     // The price of the underlying stock.
     float           S;
     // The strike price of the option.
@@ -51,6 +68,13 @@ typedef struct afOptionInfo_t {
     float           price;
     // The dividend yield of the underlying stock.
     float           q;
+    //
+    afCurve_t*      r_curve;
+
+    afCurve_t*      q_curve;
+    //
+    afCurve_t*      sigma_curve;
+
 } afOptionInfo_t;
 
 #endif // AF_OPTIONS_H
