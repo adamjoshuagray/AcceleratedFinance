@@ -1,11 +1,12 @@
 
 #include "BSOptionValuation.h"
+#include "Result.h"
 #include "MathExtensions.h"
 #include "math.h"
 #include "stdbool.h"
 
 __device__
-bool af_EuroOptionValidate(afOptionInfo_t* option) {
+bool af_BSOptionValidate(afOptionInfo_t* option) {
   return (option->style == AF_OPTION_STYLE_EUROPEAN &&
     option->sigma_style == AF_OPTION_SIGMA_STYLE_SCALAR &&
     option->r_style == AF_OPTION_YIELD_STYLE_SCALAR &&
@@ -13,7 +14,7 @@ bool af_EuroOptionValidate(afOptionInfo_t* option) {
 }
 
 __device__
-float af_EuroOptionD_1(float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q) {
+float af_BSOptionD_1(float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q) {
   float a = 1. / sigma * rsqrt_tau;
   float b = ln_S_K + (r - q + __powf(sigma, 2.) / 2.) * tau;
   float d_1 = a * b;
@@ -21,7 +22,7 @@ float af_EuroOptionD_1(float rsqrt_tau, float tau, float sigma, float ln_S_K, fl
 }
 
 __device__
-float af_EuroOptionD_2(float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q) {
+float af_BSOptionD_2(float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q) {
   float a = 1. / sigma * rsqrt_tau;
   float b = ln_S_K + (r - q - __powf(sigma, 2.) / 2.) * tau;
   float d_1 = a * b;
@@ -29,9 +30,9 @@ float af_EuroOptionD_2(float rsqrt_tau, float tau, float sigma, float ln_S_K, fl
 }
 
 __device__
-float af_EuroOptionPrice(afOptionType_t type, float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q, float S, float K, float disc_r, float disc_q) {
-  float d_1 = af_EuroOptionD_1(rsqrt_tau, tau, sigma, ln_S_K, r, q);
-  float d_2 = af_EuroOptionD_2(rsqrt_tau, tau, sigma, ln_S_K, r, q);
+float af_BSOptionPrice(afOptionType_t type, float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q, float S, float K, float disc_r, float disc_q) {
+  float d_1 = af_BSOptionD_1(rsqrt_tau, tau, sigma, ln_S_K, r, q);
+  float d_2 = af_BSOptionD_2(rsqrt_tau, tau, sigma, ln_S_K, r, q);
   float a;
   float b;
   if (type == AF_OPTION_TYPE_CALL) {
@@ -44,28 +45,28 @@ float af_EuroOptionPrice(afOptionType_t type, float rsqrt_tau, float tau, float 
     b = normcdff(-d_2) * K * disc_r;
     return b - a;
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 __device__
-float af_EuroOptionPrice(afOptionInfo_t* option) {
-  if (af_EuroOptionValidate(option)) {
+float af_BSOptionPrice(afOptionInfo_t* option) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);
     float disc_r    = expf(-option->r * option->tau);
     float disc_q    = expf(-option->q * option->tau);
-    return af_EuroOptionPrice(option->type, rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q);
+    return af_BSOptionPrice(option->type, rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q);
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 __device__
-float af_EuroOptionDelta(afOptionInfo_t* option) {
-  if (af_EuroOptionValidate(option)) {
+float af_BSOptionDelta(afOptionInfo_t* option) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);
     float disc_q    = expf(-option->q * option->tau);
-    float d_1       = af_EuroOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
+    float d_1       = af_BSOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
     if (option->type == AF_OPTION_TYPE_CALL) {
       return disc_q * normcdff(d_1);
     }
@@ -73,58 +74,58 @@ float af_EuroOptionDelta(afOptionInfo_t* option) {
       return -disc_q * normcdff(-d_1);
     }
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 __device__
-float af_EuroOptionVega(afOptionInfo_t* option) {
-  if (af_EuroOptionValidate(option)) {
+float af_BSOptionVega(afOptionInfo_t* option) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);
     float disc_q    = expf(-option->q * option->tau);
-    float d_1       = af_EuroOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
+    float d_1       = af_BSOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
     return option->S * disc_q * normcdff(d_1) * sqrtf(option->tau);
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 __device__
-float af_EuroOptionGamma(afOptionInfo_t* option) {
-  if (af_EuroOptionValidate(option)) {
+float af_BSOptionGamma(afOptionInfo_t* option) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);
     float disc_q    = expf(-option->q * option->tau);
-    float d_1       = af_EuroOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
+    float d_1       = af_BSOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
     return disc_q * af_normpdff(d_1) * sqrtf(option->tau) * rsqrt_tau / (option->S * option->sigma);
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 __device__
-float af_EuroOptionRho(afOptionInfo_t* option) {
-  if (af_EuroOptionValidate(option)) {
+float af_BSOptionRho(afOptionInfo_t* option) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);
     float disc_r    = expf(-option->r * option->tau);
-    float d_2       = af_EuroOptionD_2(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
+    float d_2       = af_BSOptionD_2(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
     if (option->type == AF_OPTION_TYPE_CALL) {
       return option->K * option->tau * disc_r * normcdff(d_2);
     } else {
       return -option->K * option->tau * disc_r * normcdff(-d_2);
     }
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 __device__
 float af_EuropOptionTheta(afOptionInfo_t* option) {
-  if (af_EuroOptionValidate(option)) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);
     float disc_r    = expf(-option->r * option->tau);
     float disc_q    = expf(-option->q * option->tau);
-    float d_1       = af_EuroOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
-    float d_2       = af_EuroOptionD_2(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
+    float d_1       = af_BSOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
+    float d_2       = af_BSOptionD_2(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
     float a         = disc_q * option->S * af_normpdff(d_1) * option->sigma * rsqrt_tau / 2.;
     float b;
     float c;
@@ -139,13 +140,13 @@ float af_EuropOptionTheta(afOptionInfo_t* option) {
       return b - c - a;
     }
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }
 
 
 __device__
-float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float max_sigma, float tol, int max_iter) {
-  if (af_EuroOptionValidate(option)) {
+float af_BSOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float max_sigma, float tol, int max_iter) {
+  if (af_BSOptionValidate(option)) {
     float rsqrt_tau   = rsqrt(option->tau);
     float ln_S_K      = logf(option->S / option->K);
     float disc_r      = expf(-option->r * option->tau);
@@ -155,18 +156,18 @@ float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float m
     float diff        = tol + 1.;
     float value;
     float mid;
-    if (af_EuroOptionPrice(option->type, rsqrt_tau, option->tau, b, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) > option->price) {
+    if (af_BSOptionPrice(option->type, rsqrt_tau, option->tau, b, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) > option->price) {
         // The volatility was above the max value given.
-        return AF_UNKNOWN;
+        return AF_UNKNOWN_FLOAT;
     }
-    if(af_EuroOptionPrice(option->type, rsqrt_tau, option->tau, a, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) < option->price) {
+    if(af_BSOptionPrice(option->type, rsqrt_tau, option->tau, a, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q) < option->price) {
         // The volatility was below the min value given.
-        return AF_UNKNOWN;
+        return AF_UNKNOWN_FLOAT;
     }
     // Run a simple bisection method.
     for (int i = 0; i < max_iter && diff > tol; i++) {
         mid = (a + b) / 2;
-        value = af_EuroOptionPrice(option->type, rsqrt_tau, option->tau, mid, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q);
+        value = af_BSOptionPrice(option->type, rsqrt_tau, option->tau, mid, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q);
         diff = abs(value - option->price);
         if (value > option->price) {
             b = mid;
@@ -176,5 +177,5 @@ float af_EuroOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float m
     }
     return mid;
   }
-  return AF_UNKNOWN;
+  return AF_UNKNOWN_FLOAT;
 }

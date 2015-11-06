@@ -2,6 +2,8 @@
 #ifndef AF_OPTIONS_H
 #define AF_OPTIONS_H
 
+#include "Curve.h"
+
 /**
  * These define the type of option.
  * That is, put or call.

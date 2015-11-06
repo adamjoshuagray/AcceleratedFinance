@@ -24,7 +24,7 @@
 // if this does not evaluate as true then the function will return AF_UNKNOWN
 //
 __device__
-bool af_BSOptionValidate(afOptionInfo_t* option)
+bool af_BSOptionValidate(afOptionInfo_t* option);
 //
 // Calculates d_1 as described by https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model
 //
