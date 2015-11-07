@@ -1,6 +1,8 @@
 #ifndef AF_TEST_CUDA_CURVE_H
 #define AF_TEST_CUDA_CURVE_H
 
+using namespace std;
+
 //
 // This creates a curve with enough points
 // that we can use it for testing and asserting
@@ -51,6 +53,25 @@ BOOST_AUTO_TEST_CASE( Curve_af_TimeCurveInterpolatePrevious ) {
     BOOST_CHECK(af_TimeCurveInterpolatePrevious(curve, 10000 * (i + 1)) == i * 10000 % 5559);
     BOOST_CHECK(af_TimeCurveInterpolatePrevious(curve, 10000 * (i + 1) + 999) == i * 10000 % 5559);
   }
+  af_TimeCurveDelete(curve);
+}
+
+//
+// Tests the "linear" interpolation methods.
+//
+BOOST_AUTO_TEST_CASE( Curve_af_TimeCurveInterpolateLinear ) {
+  afTimeCurve_t* curve  = afTest_CreateTimeCurve();
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_TimeCurveInterpolateLinear(curve, 0)));
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_TimeCurveInterpolateLinear(curve, 10)));
+  // Note that because we are using "linear" interpolation we can't go beyond
+  // the last point in the curve.
+  for (int i = 0; i < 9; i++) {
+    BOOST_CHECK(af_TimeCurveInterpolateLinear(curve, 10000 * (i + 1)) == i * 10000 % 5559);
+    float value = ((10000-1234) * (i * 10000 % 5559) + (1234) * ((i + 1) * 10000 % 5559)) / 10000.;
+    BOOST_CHECK(abs(af_TimeCurveInterpolateLinear(curve, 10000 * (i + 1) + 1234) - value) < EPSILON);
+  }
+  // Make sure we get an unknown result outside the interpolation region.
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_TimeCurveInterpolateLinear(curve, 10000 * 10 + 1234)));
   af_TimeCurveDelete(curve);
 }
 
