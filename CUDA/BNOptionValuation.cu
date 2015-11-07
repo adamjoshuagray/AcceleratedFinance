@@ -3,7 +3,7 @@
 #include "BNOptionValuation.h"
 #include "Result.h"
 
-__device__
+__device__ __host__
 float af_BNOptionPrice(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
   return AF_UNKNOWN_FLOAT;
 }

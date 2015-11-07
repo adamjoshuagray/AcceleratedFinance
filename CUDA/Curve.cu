@@ -3,7 +3,7 @@
 #include "Result.h"
 #include "Curve.h"
 
-__device__
+__device__ __host__
 afTimeCurve_t* af_TimeCuveSumAxBy(float a, afTimeCurve_t* x, float b, afTimeCurve_t* y) {
   // FIXME - There is a bug if one of the curves has count == 0
   int count     = max(x->count, y->count);
@@ -35,7 +35,7 @@ afTimeCurve_t* af_TimeCuveSumAxBy(float a, afTimeCurve_t* x, float b, afTimeCurv
   return NULL;
 }
 
-__device__
+__device__ __host__
 afTimeCurve_t* af_TimeCurveMult(float a, afTimeCurve_t* x) {
   afTimeCurve_t* new_curve  = (afTimeCurve_t*)malloc(sizeof(afTimeCurve_t));
   new_curve->pairs          = (afTimeCurvePair_t*)malloc(x->count * sizeof(afTimeCurvePair_t));
@@ -47,14 +47,14 @@ afTimeCurve_t* af_TimeCurveMult(float a, afTimeCurve_t* x) {
   return new_curve;
 }
 
-__device__
+__device__ __host__
 void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x) {
   for(int i = 0; i < x->count; i++) {
     x->pairs[i].value *= a;
   }
 }
 
-__device__
+__device__ __host__
 time_t af_TimeCurveLastTime(afTimeCurve_t* x) {
   if (x->count != 0) {
     return x->pairs[x->count - 1].time;
@@ -62,7 +62,7 @@ time_t af_TimeCurveLastTime(afTimeCurve_t* x) {
   return AF_UNKNOWN_TIME;
 }
 
-__device__
+__device__ __host__
 time_t af_TimeCurveFirstTime(afTimeCurve_t* x) {
   if (x->count != 0) {
     return x->pairs[0].time;
@@ -70,7 +70,7 @@ time_t af_TimeCurveFirstTime(afTimeCurve_t* x) {
   return AF_UNKNOWN_TIME;
 }
 
-__device__
+__device__ __host__
 float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t) {
   if (af_TimeCurveFirstTime(x) <= t && af_TimeCurveLastTime(x) >= t) {
     int a = 0;
@@ -93,7 +93,7 @@ float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t) {
   if (af_TimeCurveFirstTime(x) <= t && af_TimeCurveLastTime(x) >= t) {
     int a = 0;
@@ -119,7 +119,7 @@ float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_TimeCurveInterpolate(afTimeCurve_t* x, time_t t, afInterpolationStyle_t style) {
   if (style == AF_INTERPOLATION_STYLE_PREVIOUS) {
     return af_TimeCurveInterpolatePrevious(x, t);
@@ -130,7 +130,7 @@ float af_TimeCurveInterpolate(afTimeCurve_t* x, time_t t, afInterpolationStyle_t
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 void af_TimeCurveDelete(afTimeCurve_t* curve) {
   free(curve->pairs);
   free(curve);

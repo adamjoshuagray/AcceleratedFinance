@@ -6,7 +6,10 @@
 //
 // x      - The value to calculate it for.
 //
-__device__
+__device__ __host__
 float af_normpdff(float x);
+
+__device__ __host__
+float af_powf(float x, float y);
 
 #endif // AF_MATH_EXTENSIONS_H

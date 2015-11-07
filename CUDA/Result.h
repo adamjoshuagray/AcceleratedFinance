@@ -14,6 +14,4 @@
 #define AF_UNKNOWN_FLOAT NAN
 #define AF_UNKNOWN_TIME (time_t) 0;
 
-typedef int afResult_t;
-
 #endif //AF_RESULT_H

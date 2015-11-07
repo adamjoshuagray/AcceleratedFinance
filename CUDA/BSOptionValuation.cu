@@ -5,7 +5,7 @@
 #include "math.h"
 #include "stdbool.h"
 
-__device__
+__device__ __host__
 bool af_BSOptionValidate(afOptionInfo_t* option) {
   return (option->style == AF_OPTION_STYLE_EUROPEAN &&
     option->sigma_style == AF_OPTION_SIGMA_STYLE_SCALAR &&
@@ -13,23 +13,23 @@ bool af_BSOptionValidate(afOptionInfo_t* option) {
     option->q_style == AF_OPTION_DIVIDEND_STYLE_SCALAR);
 }
 
-__device__
+__device__ __host__
 float af_BSOptionD_1(float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q) {
   float a = 1. / sigma * rsqrt_tau;
-  float b = ln_S_K + (r - q + __powf(sigma, 2.) / 2.) * tau;
+  float b = ln_S_K + (r - q + af_powf(sigma, 2.) / 2.) * tau;
   float d_1 = a * b;
   return d_1;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionD_2(float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q) {
   float a = 1. / sigma * rsqrt_tau;
-  float b = ln_S_K + (r - q - __powf(sigma, 2.) / 2.) * tau;
+  float b = ln_S_K + (r - q - af_powf(sigma, 2.) / 2.) * tau;
   float d_1 = a * b;
   return d_1;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionPrice(afOptionType_t type, float rsqrt_tau, float tau, float sigma, float ln_S_K, float r, float q, float S, float K, float disc_r, float disc_q) {
   float d_1 = af_BSOptionD_1(rsqrt_tau, tau, sigma, ln_S_K, r, q);
   float d_2 = af_BSOptionD_2(rsqrt_tau, tau, sigma, ln_S_K, r, q);
@@ -48,7 +48,7 @@ float af_BSOptionPrice(afOptionType_t type, float rsqrt_tau, float tau, float si
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionPrice(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
@@ -60,7 +60,7 @@ float af_BSOptionPrice(afOptionInfo_t* option) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionDelta(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
@@ -77,7 +77,7 @@ float af_BSOptionDelta(afOptionInfo_t* option) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionVega(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
@@ -89,7 +89,7 @@ float af_BSOptionVega(afOptionInfo_t* option) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionGamma(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
@@ -101,7 +101,7 @@ float af_BSOptionGamma(afOptionInfo_t* option) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BSOptionRho(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
@@ -117,7 +117,7 @@ float af_BSOptionRho(afOptionInfo_t* option) {
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_EuropOptionTheta(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
@@ -144,7 +144,7 @@ float af_EuropOptionTheta(afOptionInfo_t* option) {
 }
 
 
-__device__
+__device__ __host__
 float af_BSOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float max_sigma, float tol, int max_iter) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau   = rsqrt(option->tau);

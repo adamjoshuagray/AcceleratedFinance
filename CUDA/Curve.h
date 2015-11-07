@@ -31,7 +31,7 @@ typedef struct afTimeCurve_t {
   int                 count;
   // The actual array of pairs.
   afTimeCurvePair_t*  pairs;
-} afCurve_t;
+} afTimeCurve_t;
 
 //
 // Calculates a * x + b * y
@@ -43,28 +43,28 @@ typedef struct afTimeCurve_t {
 // b - The value to multiply y by.
 // y - One of the curves to add.
 //
-__device__
+__device__ __host__
 afTimeCurve_t* af_TimeCuveSumAxBy(float a, afTimeCurve_t* x, float b, afTimeCurve_t* y);
 
-__device__
+__device__ __host__
 afTimeCurve_t* af_TimeCurveMult(float a, afTimeCurve_t* x);
 
-__device__
+__device__ __host__
 time_t af_TimeCurveLastTime(afTimeCurve_t* x);
 
-__device__
+__device__ __host__
 time_t af_TimeCurveFirstTime(afTimeCurve_t* x);
 
-__device__
+__device__ __host__
 float af_TimeCurveInterpolate(afTimeCurve_t* x, time_t t, afInterpolationStyle_t style);
 
-__device__
+__device__ __host__
 float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t);
 
-__device__
+__device__ __host__
 float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t);
 
-__device__
+__device__ __host__
 void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x);
 
 //
@@ -72,7 +72,8 @@ void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x);
 //
 // curve - The curve to delete.
 //
-__device__
+__device__ __host__
 void af_TimeCurveDelete(afTimeCurve_t* curve);
+
 
 #endif // AF_CURVE_H

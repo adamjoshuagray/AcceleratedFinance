@@ -57,7 +57,6 @@ typedef struct afOptionInfo_t {
     // The type of the option - Put or Call.
     afOptionType_t  type;
 
-
     afOptionSigmaStyle_t      sigma_style;
 
     afOptionDividendStyle_t   q_style;
@@ -78,12 +77,16 @@ typedef struct afOptionInfo_t {
     // The dividend yield of the underlying stock.
     float           q;
     //
-    afCurve_t*      r_curve;
+    afTimeCurve_t*  r_curve;
 
-    afCurve_t*      q_curve;
+    afTimeCurve_t*  q_curve;
     //
-    afCurve_t*      sigma_curve;
+    afTimeCurve_t*  sigma_curve;
 
 } afOptionInfo_t;
+
+__device__ __host__
+void af_OptionInfoDelete(afOptionInfo_t* option);
+
 
 #endif // AF_OPTIONS_H
