@@ -15,6 +15,10 @@
 #define AF_UNKNOWN_FLOAT NAN
 #define AF_UNKNOWN_TIME (time_t) 0;
 
+extern bool af_ResultIsUnknownFloat(float x);
+
+extern bool af_ResultIsUnknownTime(time_t x);
+
 //
 // Exports from MathExtensions.h
 // See comments in MathExtensions.h for details.

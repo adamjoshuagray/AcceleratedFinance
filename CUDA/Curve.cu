@@ -72,7 +72,7 @@ time_t af_TimeCurveFirstTime(afTimeCurve_t* x) {
 
 __device__ __host__
 float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t) {
-  if (af_TimeCurveFirstTime(x) <= t && af_TimeCurveLastTime(x) >= t) {
+  if (af_TimeCurveFirstTime(x) <= t) {
     int a = 0;
     int b = x->count;
     int m = (a + b) / 2;

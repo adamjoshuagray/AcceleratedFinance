@@ -46,12 +46,36 @@ typedef struct afTimeCurve_t {
 __device__ __host__
 afTimeCurve_t* af_TimeCuveSumAxBy(float a, afTimeCurve_t* x, float b, afTimeCurve_t* y);
 
+//
+// Calculates a * x and returns the value as a new curve.
+//
+// a - The value to multiply x by.
+// x - The curve to multiply.
+//
 __device__ __host__
 afTimeCurve_t* af_TimeCurveMult(float a, afTimeCurve_t* x);
 
+//
+// Returns the last time point in the curve.
+//
+// x - The curve to find the last time point of.
+//
 __device__ __host__
 time_t af_TimeCurveLastTime(afTimeCurve_t* x);
 
+//
+// Modifies in place the curve by multipling each
+// point by a.
+//
+// a - The value to multiply the curve by.
+// x - The curve to modify in place.
+//
+__device__ __host__
+void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x);
+
+//
+//
+//
 __device__ __host__
 time_t af_TimeCurveFirstTime(afTimeCurve_t* x);
 
@@ -63,9 +87,6 @@ float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t);
 
 __device__ __host__
 float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t);
-
-__device__ __host__
-void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x);
 
 //
 // This deallocates the memory associated with a curve.
