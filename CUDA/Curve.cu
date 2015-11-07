@@ -72,6 +72,8 @@ time_t af_TimeCurveFirstTime(afTimeCurve_t* x) {
 
 __device__ __host__
 float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t) {
+  // We can interpolate and (extrapolate) so long as the time
+  // is greater than the time for the first knot in the curve.
   if (af_TimeCurveFirstTime(x) <= t) {
     int a = 0;
     int b = x->count;
@@ -95,6 +97,7 @@ float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t) {
 
 __device__ __host__
 float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t) {
+  // We can only interpolate between the knots of the curve.
   if (af_TimeCurveFirstTime(x) <= t && af_TimeCurveLastTime(x) >= t) {
     int a = 0;
     int b = x->count;
@@ -114,7 +117,7 @@ float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t) {
     float t_diff  = (int)x->pairs[b].time - (int)x->pairs[a].time;
     float a_diff  = (int)t - (int)x->pairs[a].time;
     float b_diff  = (int)x->pairs[b].time - (int)t;
-    return (x->pairs[a].value * a_diff + x->pairs[b].value * b_diff) / t_diff;
+    return (x->pairs[a].value * b_diff + x->pairs[b].value * a_diff) / t_diff;
   }
   return AF_UNKNOWN_FLOAT;
 }
