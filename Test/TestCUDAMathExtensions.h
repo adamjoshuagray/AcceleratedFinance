@@ -2,8 +2,6 @@
 #ifndef AF_TEST_CUDA_MATH_EXTENSIONS_H
 #define AF_TEST_CUDA_MATH_EXTENSIONS_H
 
-#define EPSILON 0.000001
-
 using namespace std;
 
 //
