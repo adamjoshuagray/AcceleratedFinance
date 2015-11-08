@@ -82,9 +82,11 @@ typedef struct afOptionInfo_t {
     afTimeCurve_t*  q_curve;
     // The curve used to define the volatility throughout time.
     afTimeCurve_t*  sigma_curve;
-
 } afOptionInfo_t;
 
+//
+// Deallocates the memory associated with the option.
+//
 __device__ __host__
 void af_OptionInfoDelete(afOptionInfo_t* option);
 
