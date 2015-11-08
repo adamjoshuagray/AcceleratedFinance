@@ -7,3 +7,4 @@
 #include <boost/test/included/unit_test.hpp>
 #include "TestCUDAMathExtensions.h"
 #include "TestCUDACurve.h"
+#include "TestCUDAResult.h"
