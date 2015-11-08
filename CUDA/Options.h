@@ -56,11 +56,11 @@ typedef struct afOptionInfo_t {
     afOptionStyle_t style;
     // The type of the option - Put or Call.
     afOptionType_t  type;
-
+    // The way that the volatility is specified.
     afOptionSigmaStyle_t      sigma_style;
-
+    // The way that the dividends are specified.
     afOptionDividendStyle_t   q_style;
-
+    // The way that the discount rate is specified.
     afOptionYieldStyle_t      r_style;
     // The price of the underlying stock.
     float           S;
@@ -76,11 +76,11 @@ typedef struct afOptionInfo_t {
     float           price;
     // The dividend yield of the underlying stock.
     float           q;
-    //
+    // The yield curve used in the option calculations.
     afTimeCurve_t*  r_curve;
-
+    // The curve used to define when dividends are paid.
     afTimeCurve_t*  q_curve;
-    //
+    // The curve used to define the volatility throughout time.
     afTimeCurve_t*  sigma_curve;
 
 } afOptionInfo_t;
