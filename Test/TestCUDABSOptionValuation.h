@@ -53,7 +53,34 @@ BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionValidate ) {
   BOOST_CHECK(!af_BSOptionValidate(option));
   option->q_style         = AF_OPTION_DIVIDEND_STYLE_SCALAR;
   BOOST_CHECK(af_BSOptionValidate(option));
+  af_OptionInfoDelete(option);
 }
 
+//
+// Checks that d_1 is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionD_1 ) {
+  BOOST_CHECK(abs(af_BSOptionD_1(10, 0.01, 0.2, 0.1, 0.1, 0.05) - 5.035) < EPSILON);
+}
+
+//
+// Checks that d_2 is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionD_2 ) {
+  BOOST_CHECK(abs(af_BSOptionD_2(10, 0.01, 0.2, 0.1, 0.1, 0.05) - 5.015) < EPSILON);
+}
+
+//
+// Checks that the option price is calculated correctly.
+//
+//
+// Checks that d_2 is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionPrice ) {
+  afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
+  printf("px: %f\n", af_BSOptionPrice(option));
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 1.449) < EPSILON);
+  af_OptionInfoDelete(option);
+}
 
 #endif // AF_TEST_CUDA_BS_OPTION_VALUATION_H

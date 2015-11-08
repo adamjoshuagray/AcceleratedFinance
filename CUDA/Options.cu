@@ -2,7 +2,7 @@
 #include "Options.h"
 
 __device__ __host__
-void af_OptionDelete(afOptionInfo_t* option) {
+void af_OptionInfoDelete(afOptionInfo_t* option) {
   if (option->r_curve != NULL) {
     free(option->r_curve);
   }
