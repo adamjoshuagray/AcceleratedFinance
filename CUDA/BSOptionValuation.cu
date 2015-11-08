@@ -56,9 +56,6 @@ float af_BSOptionPrice(afOptionInfo_t* option) {
     float ln_S_K    = logf(option->S / option->K);
     float disc_r    = expf(-option->r * option->tau);
     float disc_q    = expf(-option->q * option->tau);
-    #ifndef __CUDA_ARCH__
-      printf("rsqrt_tau: %f ln_S_K: %f disc_r: %f disc_q: %f\n", rsqrt_tau, ln_S_K, disc_r, disc_q);
-    #endif
     return af_BSOptionPrice(option->type, rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q, option->S, option->K, disc_r, disc_q);
   }
   return AF_UNKNOWN_FLOAT;

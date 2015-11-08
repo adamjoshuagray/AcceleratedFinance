@@ -31,6 +31,7 @@ afOptionInfo_t* afTest_CreateOption(afOptionType_t type, float S, float K, float
   option->r               = r;
   option->q               = q;
   option->tau             = tau;
+  option->sigma           = sigma;
   return option;
 }
 
@@ -78,8 +79,26 @@ BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionD_2 ) {
 //
 BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionPrice ) {
   afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
-  printf("px: %f\n", af_BSOptionPrice(option));
-  BOOST_CHECK(abs(af_BSOptionPrice(option) - 1.449) < EPSILON);
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 1.69596) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 1.49616) < EPSILON);
+  option->sigma           = 0;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 0) < EPSILON);
+  option->type            = AF_OPTION_TYPE_CALL;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 0.1998) < EPSILON);
+  option->sigma           = 1;
+  option->r               = 0.3;
+  option->K               = 105;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 6.3775) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 10.1250) < EPSILON);
+  option->r               = 0;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 10.9056) < EPSILON);
+  option->type            = AF_OPTION_TYPE_CALL;
+  BOOST_CHECK(abs(af_BSOptionPrice(option) - 5.9056) < EPSILON);
+  // TODO: Add dividend testing.
+  option->style           = AF_OPTION_STYLE_AMERICAN;
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionPrice(option)));
   af_OptionInfoDelete(option);
 }
 
