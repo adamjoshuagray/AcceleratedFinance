@@ -8,3 +8,4 @@
 #include "TestCUDAMathExtensions.h"
 #include "TestCUDACurve.h"
 #include "TestCUDAResult.h"
+#include "TestCUDABSOptionValuation.h"
