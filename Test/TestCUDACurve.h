@@ -75,4 +75,31 @@ BOOST_AUTO_TEST_CASE( Curve_af_TimeCurveInterpolateLinear ) {
   af_TimeCurveDelete(curve);
 }
 
+//
+// Tests the multiplication of curve values.
+//
+BOOST_AUTO_TEST_CASE( Curve_af_TimeCurveMult ) {
+  afTimeCurve_t* curve      = afTest_CreateTimeCurve();
+  afTimeCurve_t* new_curve  = af_TimeCurveMult(13.5, curve);
+  for (int i = 0; i < 10; i++) {
+    BOOST_CHECK(abs(curve->pairs[i].value * 13.5 - new_curve->pairs[i].value) < EPSILON);
+  }
+  af_TimeCurveDelete(curve);
+  af_TimeCurveDelete(new_curve);
+}
+
+//
+// Tests the inplace multiplication of curves.
+//
+BOOST_AUTO_TEST_CASE( Curve_af_TimeCurveMultInPlace ) {
+  afTimeCurve_t* curve      = afTest_CreateTimeCurve();
+  afTimeCurve_t* new_curve  = af_TimeCurveMult(1, curve);
+  af_TimeCurveMultInPlace(-3.5, curve);
+  for (int i = 0; i < 10; i++) {
+    BOOST_CHECK(abs(curve->pairs[i].value - new_curve->pairs[i].value * -3.5) < EPSILON);
+  }
+  af_TimeCurveDelete(curve);
+  af_TimeCurveDelete(new_curve);
+}
+
 #endif
