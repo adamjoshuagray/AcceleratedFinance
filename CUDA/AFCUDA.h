@@ -13,7 +13,7 @@
 #define AF_RESULT_ERROR 0
 
 #define AF_UNKNOWN_FLOAT NAN
-#define AF_UNKNOWN_TIME (time_t) 0;
+#define AF_UNKNOWN_TIME (time_t) 0
 
 extern bool af_ResultIsUnknownFloat(float x);
 
