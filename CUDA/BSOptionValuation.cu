@@ -85,7 +85,7 @@ float af_BSOptionVega(afOptionInfo_t* option) {
     float ln_S_K    = logf(option->S / option->K);
     float disc_q    = expf(-option->q * option->tau);
     float d_1       = af_BSOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
-    return option->S * disc_q * normcdff(d_1) * sqrtf(option->tau);
+    return option->S * disc_q * af_normpdff(d_1) * sqrtf(option->tau);
   }
   return AF_UNKNOWN_FLOAT;
 }
@@ -97,7 +97,7 @@ float af_BSOptionGamma(afOptionInfo_t* option) {
     float ln_S_K    = logf(option->S / option->K);
     float disc_q    = expf(-option->q * option->tau);
     float d_1       = af_BSOptionD_1(rsqrt_tau, option->tau, option->sigma, ln_S_K, option->r, option->q);
-    return disc_q * af_normpdff(d_1) * sqrtf(option->tau) * rsqrt_tau / (option->S * option->sigma);
+    return disc_q * af_normpdff(d_1) * rsqrt_tau / (option->S * option->sigma);
   }
   return AF_UNKNOWN_FLOAT;
 }
@@ -119,7 +119,7 @@ float af_BSOptionRho(afOptionInfo_t* option) {
 }
 
 __device__ __host__
-float af_EuropOptionTheta(afOptionInfo_t* option) {
+float af_BSOptionTheta(afOptionInfo_t* option) {
   if (af_BSOptionValidate(option)) {
     float rsqrt_tau = rsqrt(option->tau);
     float ln_S_K    = logf(option->S / option->K);

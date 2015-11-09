@@ -130,7 +130,7 @@ float af_BSOptionRho(afOptionInfo_t* option);
 // This will return AF_UNKNOWN_FLOAT if the option has style != AF_OPTION_STYLE_EUROPEAN
 //
 __device__ __host__
-float af_EuropOptionTheta(afOptionInfo_t* option);
+float af_BSOptionTheta(afOptionInfo_t* option);
 
 //
 // Calculates the implied volatility of a European stock option.

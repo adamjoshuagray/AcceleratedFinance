@@ -74,9 +74,6 @@ BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionD_2 ) {
 //
 // Checks that the option price is calculated correctly.
 //
-//
-// Checks that d_2 is calculated correctly.
-//
 BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionPrice ) {
   afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
   BOOST_CHECK(abs(af_BSOptionPrice(option) - 1.69596) < EPSILON);
@@ -99,6 +96,71 @@ BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionPrice ) {
   // TODO: Add dividend testing.
   option->style           = AF_OPTION_STYLE_AMERICAN;
   BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionPrice(option)));
+  af_OptionInfoDelete(option);
+}
+
+//
+// Checks that the option delta is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionDelta ) {
+  afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
+  BOOST_CHECK(abs(af_BSOptionDelta(option) - 0.5279) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionDelta(option) + 0.4721) < EPSILON);
+  option->style           = AF_OPTION_STYLE_AMERICAN;
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionDelta(option)));
+  af_OptionInfoDelete(option);
+}
+
+//
+// Checks that the option gamma is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionGamma ) {
+  afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
+  BOOST_CHECK(abs(af_BSOptionGamma(option) - 0.0995) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionGamma(option) - 0.0995) < EPSILON);
+  option->style           = AF_OPTION_STYLE_AMERICAN;
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionDelta(option)));
+  af_OptionInfoDelete(option);
+}
+
+//
+// Checks that the option vega is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionVega ) {
+  afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
+  BOOST_CHECK(abs(af_BSOptionVega(option) - 7.9593) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionVega(option) - 7.9593) < EPSILON);
+  option->style           = AF_OPTION_STYLE_AMERICAN;
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionDelta(option)));
+  af_OptionInfoDelete(option);
+}
+
+//
+// Checks that the option rho is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionRho ) {
+  afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
+  BOOST_CHECK(abs(af_BSOptionRho(option) - 2.0438) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionRho(option) + 1.9482) < EPSILON);
+  option->style           = AF_OPTION_STYLE_AMERICAN;
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionDelta(option)));
+  af_OptionInfoDelete(option);
+}
+
+//
+// Checks that the option theta is calculated correctly.
+//
+BOOST_AUTO_TEST_CASE( BSOptionValuation_af_BSOptionTheta ) {
+  afOptionInfo_t* option  = afTest_CreateOption(AF_OPTION_TYPE_CALL, 100., 100., 10. / 250., 0.05, 0.2, 0.);
+  BOOST_CHECK(abs(af_BSOptionTheta(option) + 22.453) < EPSILON);
+  option->type            = AF_OPTION_TYPE_PUT;
+  BOOST_CHECK(abs(af_BSOptionTheta(option) + 17.463) < EPSILON);
+  option->style           = AF_OPTION_STYLE_AMERICAN;
+  BOOST_CHECK(af_ResultIsUnknownFloat(af_BSOptionDelta(option)));
   af_OptionInfoDelete(option);
 }
 
