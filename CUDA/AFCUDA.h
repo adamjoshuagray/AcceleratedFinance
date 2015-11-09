@@ -156,7 +156,7 @@ extern float af_BSOptionGamma(afOptionInfo_t* option);
 
 extern float af_BSOptionRho(afOptionInfo_t* option);
 
-extern float af_EuropOptionTheta(afOptionInfo_t* option);
+extern float af_BSOptionTheta(afOptionInfo_t* option);
 
 extern float af_BSOptionImpliedSigma(afOptionInfo_t* option, float min_sigma, float max_sigma, float tol, int max_iter);
 
