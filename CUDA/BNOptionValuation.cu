@@ -5,7 +5,16 @@
 
 __device__ __host__
 float af_BNOptionPrice(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
-  return AF_UNKNOWN_FLOAT;
+  // This gets a bit complicated.
+  // If this function is called from the host
+  // we need to copy the option to the device
+  // and invoke the pricing functions.
+  // Otherwise we just invoke the pricing functions.
+  #ifdef __CUDA_ARCH__
+    // Just price
+  #else
+    // Copy and then price.
+  #endif
 }
 
 __device__

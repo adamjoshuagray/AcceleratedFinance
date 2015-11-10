@@ -3,6 +3,7 @@
 #define AF_CURVE_H
 
 #include "time.h"
+#include "stdbool.h"
 
 //
 // This defines the style that will be used for interpolation.
@@ -74,7 +75,7 @@ __device__ __host__
 void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x);
 
 //
-//
+// Gets the firm time point in the curve.
 //
 __device__ __host__
 time_t af_TimeCurveFirstTime(afTimeCurve_t* x);
@@ -95,6 +96,28 @@ float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t);
 //
 __device__ __host__
 void af_TimeCurveDelete(afTimeCurve_t* curve);
+
+//
+// This copies a curve from the host to the device.
+//
+// src    - The location on the host to copy from.
+// dst    - A pointer to a pointer to the location in device memory where the
+//          curve will be stored.
+__host__
+cudaError_t af_TimeCurveCopyToDevice(afTimeCurve_t* src, afTimeCurve_t** dst);
+//
+// This copies a curve from the device to the host.
+//
+// src    - The device pointer to the curve which we want to copy to the host.
+// dst    - A pointer to a pointer to the location where we will copy the
+//          curve to.
+// assume_contiguous - Whether to first copy a contiguous block of memory
+//          and check that it is indeed contiguous or to use two memcpys
+// count  - Only used of assume_contiguous == true. This defines the number
+//          of pairs to copy.
+//
+__host__
+cudaError_t af_TimeCurveCopyToHost(afTimeCurve_t* src, afTimeCurve_t** dst, bool assume_contiguous, int count);
 
 
 #endif // AF_CURVE_H

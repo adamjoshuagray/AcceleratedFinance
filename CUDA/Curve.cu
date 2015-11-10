@@ -138,3 +138,96 @@ void af_TimeCurveDelete(afTimeCurve_t* curve) {
   free(curve->pairs);
   free(curve);
 }
+
+__host__
+cudaError_t __af_TimeCurveCopyToDevice(afTimeCurve_t* src, afTimeCurve_t** dst) {
+  void* dev_mem;
+  cudaError_t result;
+  // We attempt to put a whole curve in a contiguous block of memory.
+  result      = cudaMalloc(&dev_mem, sizeof(afTimeCurve_t) + src->count * sizeof(afTimeCurvePair_t));
+  if (result != cudaSuccess) {
+    return result;
+  }
+  afTimeCurvePair_t* host_pairs = src->pairs;
+  src->pairs = (afTimeCurvePair_t*) dev_mem + sizeof(afTimeCurve_t);
+  if (host_pairs == (afTimeCurvePair_t*) src + sizeof(afTimeCurve_t)) {
+    // We can do an contiguous copy.
+    result      = cudaMemcpy(dev_mem, src, sizeof(afTimeCurve_t) + src->count * sizeof(afTimeCurvePair_t), cudaMemcpyHostToDevice);
+    src->pairs  = host_pairs;
+    if (result != cudaSuccess) {
+      // Try to free the allocated memory.
+      cudaFree(dev_mem);
+      return result;
+    }
+    (*dst) = (afTimeCurve_t*) dev_mem;
+    return result;
+  } else {
+    // We have to do a non-contiguous copy.
+    result      = cudaMemcpy(dev_mem, src, sizeof(afTimeCurve_t), cudaMemcpyHostToDevice);
+    src->pairs  = host_pairs;
+    if (result != cudaSuccess) {
+      // Try to free the allocated memory.
+      cudaFree(dev_mem);
+      return result;
+    }
+    result      = cudaMemcpy(dev_mem + sizeof(afTimeCurve_t), src->pairs, src->count * sizeof(afTimeCurvePair_t), cudaMemcpyHostToDevice);
+    if (result != cudaSuccess) {
+      // Try and free the allocated memory.
+      cudaFree(dev_mem);
+      return result;
+    }
+    (*dst) = (afTimeCurve_t*) dev_mem;
+    return result;
+  }
+}
+
+__host__
+cudaError_t af_TimeCurveCopyToHost(afTimeCurve_t* src, afTimeCurve_t** dst, bool assume_contiguous, int count) {
+  void* host_mem;
+  cudaError_t result;
+  // If it's not contiguous then we'll assume it has a count of 0
+  // which means we'll only download the curve struct.
+  // From there we'll be able to download the correct array for the pairs.
+  if (!assume_contiguous) {
+    return af_TimeCurveCopyToHost(src, dst, true, 0);
+  }
+  // We try and pull down the whole block of memory in one go.
+  host_mem  = malloc(sizeof(afTimeCurve_t) + count * sizeof(afTimeCurvePair_t));
+  // We don't check that it's not NULL because the next operation will do
+  // that for us an give us a cudaError_t return code.
+  result    = cudaMemcpy(host_mem, src, sizeof(afTimeCurve_t) + count * sizeof(afTimeCurvePair_t), cudaMemcpyDeviceToHost);
+  if (result != cudaSuccess) {
+    // Try and free host allocated memory
+    free(host_mem);
+    return result;
+  }
+  afTimeCurve_t* host_curve = (afTimeCurve_t*) host_mem;
+  // Check that the memory copied actually makes sense.
+  if (host_curve->pairs == src + sizeof(afTimeCurve_t) && host_curve->count == count) {
+    // Copy worked!
+    host_curve->pairs = (afTimeCurvePair_t*) host_curve + sizeof(afTimeCurve_t);
+    (*dst) = host_curve;
+    return result;
+  } else if (host_curve->pairs == src + sizeof(afTimeCurve_t) && host_curve->count < count ) {
+    // We over allocated on the host. Lets deallocate some memory.
+    afTimeCurve_t* new_host_curve = realloc(host_curve, sizeof(afTimeCurve_t) + host_curve->count * sizeof(afTimeCurvePair_t));
+    if (new_host_curve == NULL) {
+      // Try and free host allocated memory.
+      free(host_mem);
+      return cudaErrorUnknown;
+    }
+    host_curve->pairs = (afTimeCurvePair_t*) host_curve + sizeof(afTimeCurve_t);
+    (*dst) = new_host_curve;
+    return result;
+  } else if (host_curve->pairs == src + sizeof(afTimeCurve_t) && host_curve->count > count) {
+    // Extend the memory allocated a bit because we under allocated on the host.
+    afTimeCurve_t* new_host_curve = realloc(host_curve, sizeof(afTimeCurve_t) + host_curve->count * sizeof(afTimeCurvePair_t));
+    if (new_host_curve == NULL) {
+      free(host_mem);
+      return cudaErrorUnknown;
+    }
+    // We'll now copy down the additional pairs.
+  } else {
+    // We copied memory that was unrelated. Lets reallocate what we have and try again.
+  }
+}

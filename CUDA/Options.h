@@ -3,6 +3,7 @@
 #define AF_OPTIONS_H
 
 #include "Curve.h"
+#include "Result.h"
 
 /**
  * These define the type of option.
@@ -83,6 +84,25 @@ typedef struct afOptionInfo_t {
     // The curve used to define the volatility throughout time.
     afTimeCurve_t*  sigma_curve;
 } afOptionInfo_t;
+
+//
+// Copies an option from the host to the device.
+// Note that this is not part of the "CUDA API" and shouldn't be exported.
+//
+__host__
+cudaError_t __af_OptionCopyToDevice(afOptionInfo_t* src, afOptionInfo_t** dst);
+
+//
+// Copies an option from the host to the device.
+//
+__host__
+cudaError_t af_OptionCopyArrayToDevice(afOptionInfo_t* src, int count, afOptionInfo_t** dst);
+
+//
+// Copies an option from the device to the host.
+//
+__host__
+cudaError_t af_OptionCopyToHost(afOptionInfo_t* src, afOptionInfo_t** dst);
 
 //
 // Deallocates the memory associated with the option.
