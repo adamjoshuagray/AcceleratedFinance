@@ -95,6 +95,8 @@ cudaError_t __af_OptionCopyToDevice(afOptionInfo_t* src, afOptionInfo_t** dst);
 //
 // Copies an option from the host to the device.
 //
+//
+//
 __host__
 cudaError_t af_OptionCopyArrayToDevice(afOptionInfo_t* src, int count, afOptionInfo_t** dst);
 
