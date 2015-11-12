@@ -101,5 +101,6 @@ float af_BNOptionTheta(afOptionInfo_t* option, afBNOptionValuationSettings_t* se
   float v1      = af_BNOptionPrice(option, settings);
   option->tau   = tau - settings->epsilon;
   float v2      = af_BNOptionPrice(option, settings);
+  option->tau   = tau;
   return (v2 - v1) / (2. * settings->epsilon);
 }
