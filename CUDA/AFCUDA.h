@@ -54,6 +54,10 @@ extern time_t af_TimeCurveLastTime(afTimeCurve_t* x);
 
 extern time_t af_TimeCurveFirstTime(afTimeCurve_t* x);
 
+afTimeCurve_t* af_TimeCurveAdd(float a, afTimeCurve_t* x);
+
+void af_TimeCurveAddInPlace(float a, afTimeCurve_t* x);
+
 extern float af_TimeCurveInterpolate(afTimeCurve_t* x, time_t t, afInterpolationStyle_t style);
 
 extern float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t);

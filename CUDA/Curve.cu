@@ -54,6 +54,25 @@ void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x) {
   }
 }
 
+
+afTimeCurve_t* af_TimeCurveAdd(float a, afTimeCurve_t* x) {
+  afTimeCurve_t* new_curve = (afTimeCurve_t*)malloc(sizeof(afTimeCurve_t));
+  new_curve->pairs          = (afTimeCurvePair_t*)malloc(x->count * sizeof(afTimeCurvePair_t));
+  new_curve->count          = x->count;
+  for(int i = 0; i < x->count; i++) {
+    new_curve->pairs[i].time  = x->pairs[i].time;
+    new_curve->pairs[i].value = a + x->pairs[i].value;
+  }
+  return new_curve;
+}
+
+void af_TimeCurveAddInPlace(float a, afTimeCurve_t* x) {
+  for(int i = 0; i < x->count; i++) {
+    x->pairs[i].value += a;
+  }
+}
+
+
 __device__ __host__
 time_t af_TimeCurveLastTime(afTimeCurve_t* x) {
   if (x->count != 0) {
@@ -140,7 +159,7 @@ void af_TimeCurveDelete(afTimeCurve_t* curve) {
 }
 
 __host__
-cudaError_t __af_TimeCurveCopyToDevice(afTimeCurve_t* src, afTimeCurve_t** dst) {
+cudaError_t af_TimeCurveCopyToDevice(afTimeCurve_t* src, afTimeCurve_t** dst) {
   void* dev_mem;
   cudaError_t result;
   // We attempt to put a whole curve in a contiguous block of memory.
@@ -226,7 +245,7 @@ cudaError_t af_TimeCurveCopyToHost(afTimeCurve_t* src, afTimeCurve_t** dst, bool
       free(host_mem);
       return cudaErrorUnknown;
     }
-    // We'll now copy down the additional pairs.
+    int offset =
   } else {
     // We copied memory that was unrelated. Lets reallocate what we have and try again.
   }

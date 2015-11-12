@@ -57,14 +57,6 @@ __device__ __host__
 afTimeCurve_t* af_TimeCurveMult(float a, afTimeCurve_t* x);
 
 //
-// Returns the last time point in the curve.
-//
-// x - The curve to find the last time point of.
-//
-__device__ __host__
-time_t af_TimeCurveLastTime(afTimeCurve_t* x);
-
-//
 // Modifies in place the curve by multipling each
 // point by a.
 //
@@ -73,6 +65,31 @@ time_t af_TimeCurveLastTime(afTimeCurve_t* x);
 //
 __device__ __host__
 void af_TimeCurveMultInPlace(float a, afTimeCurve_t* x);
+
+//
+// Adds a to every point on the curve.
+//
+// a - The number to add to every point.
+// x - The curve to add the number to.
+//
+__device__ __host__
+afTimeCurve_t* af_TimeCurveAdd(float a, afTimeCurve_t* x);
+
+//
+// Adds a to every point on the curve in place.
+//
+// a - The number to add to every point.
+// x - The curve to modify in place.
+__device__ __host__
+void af_TimeCurveAddInPlace(float a, afTimeCurve_t* x);
+
+//
+// Returns the last time point in the curve.
+//
+// x - The curve to find the last time point of.
+//
+__device__ __host__
+time_t af_TimeCurveLastTime(afTimeCurve_t* x);
 
 //
 // Gets the firm time point in the curve.
