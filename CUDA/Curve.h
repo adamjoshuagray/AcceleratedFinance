@@ -107,6 +107,14 @@ __device__ __host__
 float af_TimeCurveInterpolateLinear(afTimeCurve_t* x, time_t t);
 
 //
+// This creates a time curve malloced in a contiguous manner.
+//
+// The actual times and values are uninitialized.
+//
+__device__ __host__
+afTimeCurve_t* af_TimeCurveCreate(int count);
+
+//
 // This deallocates the memory associated with a curve.
 //
 // curve - The curve to delete.

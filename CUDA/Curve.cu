@@ -90,6 +90,13 @@ time_t af_TimeCurveFirstTime(afTimeCurve_t* x) {
 }
 
 __device__ __host__
+afTimeCurve_t* af_TimeCurveCreate(int count) {
+  afTimeCurve_t* curve = (afTimeCurve_t*) malloc(sizeof(afTimeCurve_t) + count * sizeof(afTimeCurvePair_t));
+  curve->pairs = (afTimeCurvePair_t*)((char*)curve + sizeof(afTimeCurve_t));
+  return curve;
+}
+
+__device__ __host__
 float af_TimeCurveInterpolatePrevious(afTimeCurve_t* x, time_t t) {
   // We can interpolate and (extrapolate) so long as the time
   // is greater than the time for the first knot in the curve.
