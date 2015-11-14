@@ -17,7 +17,7 @@ float af_BNOptionPrice(afOptionInfo_t* option, afBNOptionValuationSettings_t* se
   #endif
 }
 
-__device__
+__device__ __host__
 float af_BNOptionDelta(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
   float S         = option->S;
   option->S       = S + settings->epsilon;
@@ -28,7 +28,7 @@ float af_BNOptionDelta(afOptionInfo_t* option, afBNOptionValuationSettings_t* se
   return (v1 - v2) / (2. * settings->epsilon);
 }
 
-__device__
+__device__ __host__
 float af_BNOptionGamma(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
   // This can be made faster by doing three price evaluations
   // instead of 4. - FIXME
@@ -41,7 +41,7 @@ float af_BNOptionGamma(afOptionInfo_t* option, afBNOptionValuationSettings_t* se
   return (v1 - v2) / (2. * settings->epsilon);
 }
 
-__device__
+__device__ __host__
 float af_BNOptionVega(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
   if (option->sigma_style == AF_OPTION_SIGMA_STYLE_SCALAR) {
     float sigma     = option->sigma;
@@ -70,7 +70,7 @@ float af_BNOptionVega(afOptionInfo_t* option, afBNOptionValuationSettings_t* set
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BNOptionRho(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
   if (option->r_style == AF_OPTION_YIELD_STYLE_SCALAR) {
     float r         = option->r;
@@ -94,7 +94,7 @@ float af_BNOptionRho(afOptionInfo_t* option, afBNOptionValuationSettings_t* sett
   return AF_UNKNOWN_FLOAT;
 }
 
-__device__
+__device__ __host__
 float af_BNOptionTheta(afOptionInfo_t* option, afBNOptionValuationSettings_t* settings) {
   float tau     = option->tau;
   option->tau   = tau + settings->epsilon;
